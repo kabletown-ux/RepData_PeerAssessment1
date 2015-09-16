@@ -40,7 +40,12 @@ median( sumSteps$steps )
 
 ## What is the average daily activity pattern?
 
+```r
+avgStepsByInterval <- aggregate( steps ~ interval, data = rawData, FUN = mean )
+ggplot( data = avgStepsByInterval, aes( x = interval, y = steps ) ) + geom_line() + xlab( "5 Minute Intervals" ) + ylab( "Average Steps Taken" )
+```
 
+![](PA1_files/figure-html/unnamed-chunk-4-1.png) 
 
 ## Imputing missing values
 

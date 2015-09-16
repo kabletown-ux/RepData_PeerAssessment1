@@ -21,3 +21,9 @@ calculateMeanAndMedianSteps <- function() {
     print( mean( sumSteps$steps ) )
     print( median( sumSteps$steps ) )
 }
+
+calculateAvgStepsPerInterval <- function() {
+  
+    avgStepsByInterval <- aggregate( steps ~ interval, data = rawData, FUN = mean )
+    ggplot( data = avgStepsByInterval, aes( x = interval, y = steps ) ) + geom_line() + xlab( "5 Minute Intervals" ) + ylab( "Average Steps Taken" )
+}

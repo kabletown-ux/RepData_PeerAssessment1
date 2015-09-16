@@ -23,12 +23,15 @@ qplot( date, data = sumSteps, weight = steps, geom = "histogram" )
 
 mean( sumSteps$steps )
 median( sumSteps$steps )
-
 ```
 
 ## What is the average daily activity pattern?
+```{r}
+avgStepsByInterval <- aggregate( steps ~ interval, data = rawData, FUN = mean )
+ggplot( data = avgStepsByInterval, aes( x = interval, y = steps ) ) + geom_line() + xlab( "5 Minute Intervals" ) + ylab( "Average Steps Taken" )
 
-
+## TODO: reformat intervals as times?
+```
 
 ## Imputing missing values
 
