@@ -20,7 +20,7 @@ sumSteps <- aggregate( steps ~ date, data = rawData, FUN = sum )
 qplot( date, data = sumSteps, weight = steps, geom = "histogram" )
 ```
 
-![](PA1_files/figure-html/unnamed-chunk-3-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
 
 ```r
 mean( sumSteps$steps )
@@ -45,7 +45,7 @@ avgStepsByInterval <- aggregate( steps ~ interval, data = rawData, FUN = mean )
 ggplot( data = avgStepsByInterval, aes( x = interval, y = steps ) ) + geom_line() + xlab( "5 Minute Intervals" ) + ylab( "Average Steps Taken" )
 ```
 
-![](PA1_files/figure-html/unnamed-chunk-4-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
 
 ```r
 ## TODO: reformat intervals as times?
@@ -66,18 +66,13 @@ nrow( rawData[ !complete.cases( rawData ), ] )
 ####3) Create dataset with NAs replaced by mean of interval
 
 ```r
-## could do this, but how to assign values?
-##aggregate( steps ~ interval, data = rawData[ complete.cases( rawData ), ], FUN = mean )
 replaceNasWithMean <- function( steps, interval ) {
     
-    tempValue <- NA
-    
     if ( !is.na( steps ) ) {
-        tempValue <- c( steps ) 
+        return ( steps ) 
     } else {
-        tempValue <- meanStepsByInterval[ meanStepsByInterval$interval == interval, "steps" ]
+        return( meanStepsByInterval[ meanStepsByInterval$interval == interval, "steps" ] )
     }
-    tempValue
 }
 
 meanStepsByInterval <- aggregate( steps ~ interval, data = rawData[ complete.cases( rawData ), ], FUN = mean )
@@ -95,7 +90,7 @@ ggplot( stepsByDate, aes( date, steps ) ) +
 geom_bar( stat = "identity", fill = "grey", width = 0.75 )
 ```
 
-![](PA1_files/figure-html/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
 
 ```r
 #TODO: Fix/remove cramped dates on x axis
@@ -117,6 +112,38 @@ median( stepsByDate$steps )
 ```
 ## [1] 10766.19
 ```
-####4.2) TODO:Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+####4.2) Do these values differ from the estimates from the first part of the assignment? 
+
+Yes.
+
+####4.3) What is the impact of imputing missing data on the estimates of the total daily number of steps? 
+It skews the median a bit.
  
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```r
+weekOrWeekend <- function( date ) {
+    
+    day <- weekdays( date )
+    
+    if ( day %in% c( "Monday", "Tuesday", "Wednesday", "Thursday", "Friday" ) ) {
+        return ("weekday")
+    } else if ( day %in% c( "Saturday", "Sunday" ) ) {
+        return ("weekend")
+    } else {
+        stop( "invalid date" )
+    }
+}
+updatedData$date <- as.Date( updatedData$date )
+updatedData$day <- sapply( updatedData$date, FUN = weekOrWeekend )
+
+stepsPerIntervalDay <- aggregate( steps ~ interval + day, data = updatedData, mean )
+#print( stepsPerIntervalDay )
+ggplot( stepsPerIntervalDay, aes( interval, steps ) ) + 
+    geom_line() + 
+    facet_grid( day ~ . ) + 
+    xlab( "Measured in 5 minute intervals" ) + 
+    ylab( "Number of steps per interval" )
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
