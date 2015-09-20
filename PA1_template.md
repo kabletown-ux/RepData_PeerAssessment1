@@ -16,8 +16,13 @@ rawData <- read.csv( "activity.csv" )
 
 ```r
 sumSteps <- aggregate( steps ~ date, data = rawData, FUN = sum )
-## TODO: fix date label crowding!
-qplot( date, data = sumSteps, weight = steps, geom = "histogram" )
+
+## TODO: Format days as "M/T/W/Th/F/Sa/Su", instead of just nuking all reference to date
+ggplot( sumSteps, aes( date, steps ) ) +
+    geom_bar( stat = "identity", width = 0.75 ) +
+    theme( axis.ticks = element_blank(), axis.text.x = element_blank() ) +
+    xlab( "Days" ) +
+    ylab( "Steps (thousdands)" )
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
@@ -86,15 +91,16 @@ updatedData$steps <- mapply( replaceNasWithMean, updatedData$steps, updatedData$
 ```r
 stepsByDate <- aggregate( steps ~ date, data = updatedData, FUN = sum )
 
+## TODO: Format days as "M/T/W/Th/F/Sa/Su", instead of just nuking all reference to date
 ggplot( stepsByDate, aes( date, steps ) ) +
-geom_bar( stat = "identity", fill = "grey", width = 0.75 )
+    geom_bar( stat = "identity", width = 0.75 ) +
+    theme( axis.ticks = element_blank(), axis.text.x = element_blank() ) +
+    xlab( "Days" ) +
+    ylab( "Steps (thousdands)" )
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
 
-```r
-#TODO: Fix/remove cramped dates on x axis
-```
 ####4.1) Calculate and report the mean and median total number of steps taken per day. 
 
 ```r
@@ -138,7 +144,6 @@ updatedData$date <- as.Date( updatedData$date )
 updatedData$day <- sapply( updatedData$date, FUN = weekOrWeekend )
 
 stepsPerIntervalDay <- aggregate( steps ~ interval + day, data = updatedData, mean )
-#print( stepsPerIntervalDay )
 ggplot( stepsPerIntervalDay, aes( interval, steps ) ) + 
     geom_line() + 
     facet_grid( day ~ . ) + 
